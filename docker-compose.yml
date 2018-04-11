@@ -1,0 +1,41 @@
+version: '2.2'
+services:
+  # Elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.3
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - ES_JAVA_OPTS=-Xmx2g -Xms2g
+      - network.host=_site_
+      - xpack.graph.enabled=false
+      - xpack.ml.enabled=false
+      - xpack.monitoring.enabled=false
+      - xpack.security.enabled=false
+      - xpack.watcher.enabled=false
+    logging:
+      driver: json-file
+      options:
+        max-size: "250m"
+        max-file: "10"
+
+  # Kibana
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.2.3
+    ports:
+      - "5601:5601"
+    environment:
+      - xpack.monitoring.enabled=false
+    links:
+      - elasticsearch:elasticsearch
+    logging:
+      driver: json-file
+      options:
+        max-size: "250m"
+        max-file: "10"
+
+networks:
+  default:
+    external:
+      name: hronom
